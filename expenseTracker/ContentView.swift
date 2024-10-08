@@ -8,14 +8,30 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var isActive: Bool = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        
+        ZStack{
+            if isActive {
+                MainView()
+            }else{
+                ZStack {
+                    Color(.blue)
+                        .ignoresSafeArea()
+                    VStack {
+                        Image(systemName: "globe")
+                            .imageScale(.large)
+                            .foregroundStyle(.white)
+                        Text("Hello, world!")
+                            .foregroundStyle(.white)
+                    }
+                    .padding()
+                }
+            }
         }
-        .padding()
+        .onAppear {DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {withAnimation {self.isActive = true}}}
     }
 }
 
