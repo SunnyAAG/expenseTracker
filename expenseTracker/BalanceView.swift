@@ -17,59 +17,80 @@ struct BalanceView: View {
     @State private var alertMessage: String = ""
     
     var body: some View {
-        VStack {
+        VStack(spacing: 30) {
             if let userProfile = userProfiles.first {
+                
                 Text("Balance")
                     .font(.largeTitle)
-                    .padding()
-                
-                Text("Name: \(userProfile.name)")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                Text(userProfile.name)
                     .font(.headline)
-                
-                Text("Balance: \(userProfile.currency) \(userProfile.balance, specifier: "%.2f")")
-                    .font(.largeTitle)
-                    .padding()
+                    .foregroundColor(.secondary)
+                ZStack {
+                    Circle()
+                        .fill(Color.blue.opacity(0.1))
+                        .frame(width: 300, height: 300)
+                        .shadow(radius: 10)
+                    
+                    VStack {
+                        Text("\(userProfile.currency)")
+                            .font(.system(size: 30, weight: .bold))
+                            .foregroundColor(.primary)
+                        
+                        Text("\(userProfile.balance, specifier: "%.2f")")
+                            .font(.system(size: 40, weight: .bold))
+                            .foregroundColor(.primary)
+                    }
+                }
+                .padding(.bottom, 70)
                 
                 TextField("Enter amount", text: $balanceInput)
                     .keyboardType(.decimalPad)
-                    .textFieldStyle(.roundedBorder)
                     .padding()
-                
-                HStack {
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                HStack(spacing: 15) {
                     Button(action: {
                         addBalance(to: userProfile)
                     }) {
                         Text("Add")
-                            .font(.headline)
-                            .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.green)
+                            .frame(height: 50)
+                            .background(Color.green.opacity(0.7))
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .cornerRadius(12)
                     }
                     
                     Button(action: {
                         subtractBalance(from: userProfile)
                     }) {
                         Text("Subtract")
-                            .font(.headline)
-                            .padding()
                             .frame(maxWidth: .infinity)
-                            .background(Color.red)
+                            .frame(height: 50)
+                            .background(Color.red.opacity(0.7))
                             .foregroundColor(.white)
-                            .cornerRadius(10)
+                            .cornerRadius(12)
                     }
                 }
-                .padding()
+                .padding(.horizontal)
             } else {
                 Text("No profile found.")
                     .font(.headline)
-                    .padding()
+                    .foregroundColor(.red)
             }
         }
         .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(20)
+        .shadow(radius: 5)
+        .padding(.horizontal, 20)
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Transaction Result"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .onTapGesture {
+            hideKeyboard()
         }
     }
     
@@ -93,6 +114,10 @@ struct BalanceView: View {
             alertMessage = "Invalid amount or insufficient funds."
         }
         showAlert = true
+    }
+    
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
